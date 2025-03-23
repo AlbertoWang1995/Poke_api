@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { URL_POKEMON, URL_ESPECIES } from '../api/apiRest';
-import '../components/card.css';
+import { URL_POKEMON, URL_ESPECIES, URL_EVOLUTIONS } from '../api/apiRest';
 import psyduck from '../assets/psyduck.jpg';
-
+import '../components/card.css';
 
 export default function Detail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [especie, setEspecie] = useState(null);
+  const [evoluciones, setEvoluciones] = useState([]);
   const [error, setError] = useState(false);
 
   const tipoTraducido = {
@@ -35,6 +35,29 @@ export default function Detail() {
         const resEsp = await fetch(`${URL_ESPECIES}/${poke.id}`);
         const especieData = await resEsp.json();
         setEspecie(especieData);
+
+        const evoUrl = especieData.evolution_chain?.url;
+        if (evoUrl) {
+          const evoId = evoUrl.split("/").slice(-2, -1)[0];
+          const responseEvo = await fetch(`${URL_EVOLUTIONS}/${evoId}`);
+          const evoData = await responseEvo.json();
+
+          const evolucionesArray = [];
+          let current = evoData.chain;
+
+          while (current) {
+            const res = await fetch(`${URL_POKEMON}/${current.species.name}`);
+            const evoPoke = await res.json();
+            evolucionesArray.push({
+              name: current.species.name,
+              sprite: evoPoke.sprites.other['official-artwork'].front_default || '',
+            });
+            current = current.evolves_to[0] || null;
+          }
+
+          setEvoluciones(evolucionesArray);
+        }
+
       } catch (e) {
         setError(true);
       }
@@ -76,6 +99,7 @@ export default function Detail() {
       </main>
     );
   }
+
   if (!data || !especie) return <p style={{ textAlign: 'center' }}>Cargando...</p>;
 
   const bgColor = `bg-${especie.color?.name || 'white'}`;
@@ -89,18 +113,11 @@ export default function Detail() {
 
   return (
     <main style={{ padding: '2rem', textAlign: 'center' }}>
-      <div
-        className={`card ${bgColor}`}
-        style={{
-          maxWidth: '600px',
-          margin: '0 auto',
-          transform: 'none',
-        }}
-      >
+      <div className={`card ${bgColor}`} style={{ maxWidth: '600px', margin: '0 auto' }}>
         <div className="img_poke_container" style={{ paddingTop: '1.5rem' }}>
           <img
             className={`img_poke ${bgColor}`}
-            style={{ width: '200px' }} // imagen más grande
+            style={{ width: '200px' }}
             src={data.sprites.other['official-artwork'].front_default}
             alt={data.name}
           />
@@ -133,10 +150,31 @@ export default function Detail() {
               ))}
             </div>
           </div>
+
+          {/* Cadena evolutiva */}
+          {evoluciones.length > 0 && (
+            <div className="div_evolutions">
+              <h4>Cadena Evolutiva</h4>
+              <div className="evo_chain">
+              {evoluciones.map((evo, index) => (
+              <div
+    key={index}
+    className="evo_item"
+    onClick={() => navigate(`/pokemon/${evo.name}`)}
+    style={{ cursor: 'pointer' }}
+    title={`Ver detalle de ${evo.name}`}
+  >
+    <img src={evo.sprite} alt={evo.name} />
+    <h6>{evo.name.charAt(0).toUpperCase() + evo.name.slice(1)}</h6>
+  </div>
+))}
+
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Botón de regreso */}
       <button
         onClick={() => navigate('/')}
         style={{

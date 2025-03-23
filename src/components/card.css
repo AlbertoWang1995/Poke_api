@@ -201,6 +201,21 @@ body.dark .dark-mode-aware {
   text-transform: capitalize;
 }
 
+.evo_item img {
+  width: 60px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.evo_item:hover img {
+  transform: scale(1.2);
+}
+
+.evo_item {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+
 /* colores por tipo */
 .color-grass { background-color: #78C850; }
 .color-poison { background-color: #A040A0; }
