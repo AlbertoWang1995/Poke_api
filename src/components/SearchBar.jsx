@@ -16,7 +16,7 @@ export default function SearchBar() {
     }
 
     const fetchPokemon = async () => {
-      const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1300');
+      const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025');
       const data = await res.json();
       setAllPokemon(data.results);
       sessionStorage.setItem('allPokemon', JSON.stringify(data.results));
