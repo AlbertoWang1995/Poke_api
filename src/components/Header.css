@@ -56,7 +56,6 @@
   background-color: #555;
 }
 
-/* Modo oscuro */
 body.dark .toggle-theme {
   background-color: #eee;
   color: #111;
@@ -66,7 +65,6 @@ body.dark .toggle-theme:hover {
   background-color: #ccc;
 }
 
-/* RESPONSIVE */
 @media (max-width: 480px) {
   .header-content {
     display: flex;
@@ -84,4 +82,18 @@ body.dark .toggle-theme:hover {
   .toggle-theme {
     align-self: center;
   }
+}
+
+.header {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header.dark {
+  background-color: #1f1f1f;
+  color: white;
+}
+
+.header.light {
+  background-color: #f5f5f5;
+  color: #222;
 }

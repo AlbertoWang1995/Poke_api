@@ -7,7 +7,7 @@ export default function ThemeToggle({ isDark, setIsDark }) {
     <button
       className="toggle-theme"
       onClick={toggleTheme}
-      onMouseDown={(e) => e.preventDefault()} // evita doble click en algunos navegadores
+      onMouseDown={(e) => e.preventDefault()} 
     >
       {isDark ? '☀️' : '🌙'}
     </button>

@@ -151,7 +151,7 @@ export default function Detail() {
             </div>
           </div>
 
-          {/* Cadena evolutiva */}
+          
           {evoluciones.length > 0 && (
             <div className="div_evolutions">
               <h4>Cadena Evolutiva</h4>

@@ -164,8 +164,8 @@ body.dark .dark-mode-aware {
   font-size: 0.75rem;
   color: #fff;
   text-transform: uppercase;
-  border: 1px solid rgba(0, 0, 0, 0.6); /* NUEVO: borde negro translúcido */
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25); /* mejora contraste */
+  border: 1px solid rgba(0, 0, 0, 0.6); 
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 
@@ -215,6 +215,25 @@ body.dark .dark-mode-aware {
   transition: background-color 0.2s ease;
 }
 
+
+body.dark .id_poke {
+  background-color: #444;
+  color: #fff;
+}
+
+body.dark .sub_card {
+  color: #fff;
+}
+
+body.dark .color_type {
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.text-shadow {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+ 
 
 /* colores por tipo */
 .color-grass { background-color: #78C850; }

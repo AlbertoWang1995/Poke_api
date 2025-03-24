@@ -18,7 +18,7 @@ export default function Header() {
   return (
     <header className={`header ${isDark ? 'dark' : 'light'}`}>
       <div className="header-content">
-        <img src={logo} alt="Pokedex Logo" className="logo" />
+        <img src={logo} alt="Pokemon Logo" className="logo" />
         <SearchBar />
         <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
       </div>

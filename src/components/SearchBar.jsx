@@ -14,23 +14,22 @@ export default function SearchBar() {
       setAllPokemon(JSON.parse(stored));
       return;
     }
-  
+
     const fetchPokemon = async () => {
       const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1300');
       const data = await res.json();
       setAllPokemon(data.results);
       sessionStorage.setItem('allPokemon', JSON.stringify(data.results));
     };
-  
+
     fetchPokemon();
   }, []);
-  
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (search.trim()) {
       navigate(`/pokemon/${search.toLowerCase()}`);
-      setSuggestions([]); // ocultar sugerencias
+      setSuggestions([]);
     }
   };
 
@@ -44,7 +43,7 @@ export default function SearchBar() {
       const filtered = allPokemon.filter((poke) =>
         poke.name.includes(input)
       );
-      setSuggestions(filtered.slice(0, 6)); // máx. 6 sugerencias
+      setSuggestions(filtered.slice(0, 6));
     }
   };
 
@@ -52,6 +51,11 @@ export default function SearchBar() {
     navigate(`/pokemon/${name}`);
     setSearch('');
     setSuggestions([]);
+  };
+
+  const handleBlur = () => {
+    // Esperar un poco antes de cerrar sugerencias, para permitir clic en sugerencia
+    setTimeout(() => setSuggestions([]), 100);
   };
 
   return (
@@ -64,9 +68,11 @@ export default function SearchBar() {
           onChange={handleChange}
           value={search}
           autoComplete="off"
+          aria-label="Buscar Pokémon por nombre o número"
+          onBlur={handleBlur}
         />
       </form>
-  
+
       {suggestions.length > 0 && (
         <ul className="suggestions-list">
           {suggestions.map((poke) => (

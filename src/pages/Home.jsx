@@ -13,14 +13,17 @@ export default function Home() {
   useEffect(() => {
     const fetchPokemonList = async () => {
       setLoading(true);
-      const response = await fetch(`${URL_POKEMON}?limit=1300`);
+      const response = await fetch(`${URL_POKEMON}?limit=1025`); // el limite es mayor, a partir de este limite son "pokemons especiales con otra serie de IDs y nos los tengo en cuenta"
       const data = await response.json();
       setPokemonList(data.results);
       setLoading(false);
     };
-
     fetchPokemonList();
   }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   const totalPages = Math.ceil(pokemonList.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -58,12 +61,12 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Paginación */}
             <div className="pagination">
               <button
                 className="page-button"
                 onClick={() => setCurrentPage(1)}
                 disabled={currentPage === 1}
+                aria-label="Ir a la primera página"
               >
                 ⏪ Inicio
               </button>
@@ -72,6 +75,7 @@ export default function Home() {
                 className="page-button"
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
+                aria-label="Página anterior"
               >
                 ⏮ Anterior
               </button>
@@ -81,6 +85,8 @@ export default function Home() {
                   key={num}
                   className={`page-button ${currentPage === num ? 'active' : ''}`}
                   onClick={() => setCurrentPage(num)}
+                  aria-current={currentPage === num ? 'page' : undefined}
+                  aria-label={`Página ${num}`}
                 >
                   {num}
                 </button>
@@ -90,6 +96,7 @@ export default function Home() {
                 className="page-button"
                 onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
+                aria-label="Página siguiente"
               >
                 Siguiente ⏭
               </button>
@@ -98,6 +105,7 @@ export default function Home() {
                 className="page-button"
                 onClick={() => setCurrentPage(totalPages)}
                 disabled={currentPage === totalPages}
+                aria-label="Ir a la última página"
               >
                 Último ⏩
               </button>
