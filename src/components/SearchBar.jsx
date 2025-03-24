@@ -59,27 +59,29 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="search-wrapper">
-      <form className="search-form" onSubmit={handleSearch}>
-        <input
-          className="search-input"
-          type="search"
-          placeholder="Buscar por nombre o ID"
-          onChange={handleChange}
-          value={search}
-          autoComplete="off"
-          aria-label="Buscar Pokémon por nombre o número"
-          onBlur={handleBlur}
-        />
-      </form>
-
+    <div
+      className="search-wrapper"
+      tabIndex={0}
+      onBlur={() => setTimeout(() => setSuggestions([]), 100)}
+    >
+    <form className="search-form" onSubmit={handleSearch}>
+    <input
+      className="search-input"
+      type="search"
+      placeholder="Buscar por nombre o ID"
+      onChange={handleChange}
+      value={search}
+      autoComplete="off"
+      aria-label="Buscar Pokémon por nombre o número"
+      />
+    </form>
       {suggestions.length > 0 && (
-        <ul className="suggestions-list">
-          {suggestions.map((poke) => (
-            <li key={poke.name} onClick={() => handleSuggestionClick(poke.name)}>
-              {poke.name.charAt(0).toUpperCase() + poke.name.slice(1)}
-            </li>
-          ))}
+       <ul className="suggestions-list">
+        {suggestions.map((poke) => (
+          <li key={poke.name} onClick={() => handleSuggestionClick(poke.name)}>
+            {poke.name.charAt(0).toUpperCase() + poke.name.slice(1)}
+           </li>
+        ))}
         </ul>
       )}
     </div>

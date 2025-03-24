@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { URL_POKEMON, URL_ESPECIES, URL_EVOLUTIONS } from '../api/apiRest';
+import { fetchPokemonDataByName, fetchSpeciesById, fetchEvolutionByUrl } from '../utils/apiHelpers';
+import { tipoTraducido, statTraducido, habitatTraducido } from '../utils/translate';
 import psyduck from '../assets/psyduck.jpg';
 import '../components/card.css';
 
@@ -12,42 +13,23 @@ export default function Detail() {
   const [evoluciones, setEvoluciones] = useState([]);
   const [error, setError] = useState(false);
 
-  const tipoTraducido = {
-    fire: 'fuego', water: 'agua', grass: 'planta', electric: 'eléctrico', normal: 'normal',
-    fighting: 'lucha', poison: 'veneno', ground: 'tierra', flying: 'volador', psychic: 'psíquico',
-    bug: 'bicho', rock: 'roca', ghost: 'fantasma', dark: 'siniestro', dragon: 'dragón',
-    steel: 'acero', fairy: 'hada', ice: 'hielo'
-  };
-
-  const statTraducido = {
-    hp: 'Salud', attack: 'Ataque', defense: 'Defensa',
-    'special-attack': 'Ataque Esp.', 'special-defense': 'Defensa Esp.', speed: 'Velocidad'
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resPoke = await fetch(`${URL_POKEMON}/${id}`);
-        if (!resPoke.ok) throw new Error();
-        const poke = await resPoke.json();
+        const poke = await fetchPokemonDataByName(id);
         setData(poke);
 
-        const resEsp = await fetch(`${URL_ESPECIES}/${poke.id}`);
-        const especieData = await resEsp.json();
+        const especieData = await fetchSpeciesById(poke.id);
         setEspecie(especieData);
 
         const evoUrl = especieData.evolution_chain?.url;
         if (evoUrl) {
-          const evoId = evoUrl.split("/").slice(-2, -1)[0];
-          const responseEvo = await fetch(`${URL_EVOLUTIONS}/${evoId}`);
-          const evoData = await responseEvo.json();
-
+          const evoData = await fetchEvolutionByUrl(evoUrl);
           const evolucionesArray = [];
           let current = evoData.chain;
 
           while (current) {
-            const res = await fetch(`${URL_POKEMON}/${current.species.name}`);
-            const evoPoke = await res.json();
+            const evoPoke = await fetchPokemonDataByName(current.species.name);
             evolucionesArray.push({
               name: current.species.name,
               sprite: evoPoke.sprites.other['official-artwork'].front_default || '',
@@ -105,11 +87,9 @@ export default function Detail() {
   const bgColor = `bg-${especie.color?.name || 'white'}`;
   const pokeId = data.id.toString().padStart(3, '0');
   const nombre = data.name.charAt(0).toUpperCase() + data.name.slice(1);
-  const habitat = especie.habitat?.name
-    ? especie.habitat.name === 'rare'
-      ? 'Raro'
-      : especie.habitat.name.charAt(0).toUpperCase() + especie.habitat.name.slice(1)
-    : 'Desconocido';
+
+  const habitatKey = especie.habitat?.name;
+  const habitat = habitatKey ? (habitatTraducido[habitatKey] || habitatKey) : 'Desconocido';
 
   return (
     <main style={{ padding: '2rem', textAlign: 'center' }}>
@@ -151,24 +131,26 @@ export default function Detail() {
             </div>
           </div>
 
-          
           {evoluciones.length > 0 && (
             <div className="div_evolutions">
               <h4>Cadena Evolutiva</h4>
               <div className="evo_chain">
-              {evoluciones.map((evo, index) => (
-              <div
-    key={index}
-    className="evo_item"
-    onClick={() => navigate(`/pokemon/${evo.name}`)}
-    style={{ cursor: 'pointer' }}
-    title={`Ver detalle de ${evo.name}`}
-  >
-    <img src={evo.sprite} alt={evo.name} />
-    <h6>{evo.name.charAt(0).toUpperCase() + evo.name.slice(1)}</h6>
-  </div>
-))}
-
+                {evoluciones.map((evo, index) => (
+                  <div
+                    key={index}
+                    className="evo_item"
+                    onClick={() => navigate(`/pokemon/${evo.name}`)}
+                    style={{ cursor: 'pointer' }}
+                    title={`Ver detalle de ${evo.name}`}
+                  >
+                    <img
+                      className="evo-sprite"
+                      src={evo.sprite}
+                      alt={evo.name}
+                    />
+                    <h6>{evo.name.charAt(0).toUpperCase() + evo.name.slice(1)}</h6>
+                  </div>
+                ))}
               </div>
             </div>
           )}
